@@ -103,14 +103,19 @@ If the app wants to help users make changes to a file (e.g. posting a new item o
 import RSS3 from 'rss3';
 import { ethers } from 'ethers';
 
-const provider = new ethers.providers.Web3Provider(window.ethereum);
-const signer = provider.getSigner();
+const bootstrap = async () => {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const rss3 = new RSS3({
+        endpoint: 'https://prenode.rss3.dev',
+        address: await signer.getAddress(),
+        sign: async (data) => await signer.signMessage(data),
+    });
 
-const rss3 = new RSS3({
-    endpoint: 'https://prenode.rss3.dev',
-    address: await signer.getAddress(),
-    sign: async (data) => await signer.signMessage(data),
-});
+    // ...
+}
+
+bootstrap();
 ```
 
 </CodeGroupItem>
@@ -121,13 +126,19 @@ const rss3 = new RSS3({
 import RSS3 from 'rss3';
 import Web3 from 'web3';
 
-const web3 = new Web3(window.ethereum);
-const address = (await web3.eth.getAccounts())[0];
-const rss3 = new RSS3({
-    endpoint: 'https://prenode.rss3.dev',
-    address,
-    sign: async (data) => await web3.eth.personal.sign(data, address),
-});
+const bootstrap = async () => {
+    const web3 = new Web3(window.ethereum);
+    const address = (await web3.eth.getAccounts())[0];
+    const rss3 = new RSS3({
+        endpoint: 'https://prenode.rss3.dev',
+        address,
+        sign: async (data) => await web3.eth.personal.sign(data, address),
+    });
+
+    // ...
+}
+
+bootstrap();
 ```
 
 </CodeGroupItem>
